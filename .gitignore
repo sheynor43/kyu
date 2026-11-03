@@ -1,1 +1,16 @@
 /target
+
+# local only: notes and tooling for Claude Code, never published
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+ARCHITECTURE.md
+ROADMAP.md
+.mcp.json
+
+# secrets and local data
+.env
+*.env
+settings.json
+*.json.bak
+kyu-data/

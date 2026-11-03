@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Kyu
+Comment=osu! score and profile queue for Twitch streams
+Exec=kyu
+Icon=kyu
+Categories=Utility;
+Terminal=false
+StartupWMClass=kyu

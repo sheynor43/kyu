@@ -186,11 +186,12 @@ impl App {
 
     /// Decides which queue a message lands in, then adds one item per link.
     fn ingest(&mut self, m: Incoming) {
-        let links = find_links(&m.text);
+        let s = &self.settings;
+        let rules = s.link_rules();
+        let links = find_links(&m.text, &rules);
         if links.is_empty() {
             return;
         }
-        let s = &self.settings;
         let mut queue = m.origin.queue();
         match &m.origin {
             Origin::Reward { reward_id } if !s.reward_ids.is_empty() && !s.reward_ids.contains(reward_id) => {
@@ -205,7 +206,7 @@ impl App {
         let (one_per_viewer, no_dupes) = (s.one_per_viewer, s.ignore_duplicates);
         let today = self.today;
         let now = Local::now();
-        let message = strip_links(&m.text);
+        let message = strip_links(&m.text, &rules);
 
         for link in links {
             let id = self.next_id();
@@ -507,6 +508,19 @@ impl App {
                 });
             });
 
+            group(ui, tr.s_links, |ui| {
+                ui.label(RichText::new(tr.s_links_help).small().color(MUTED));
+                ui.checkbox(&mut d.link_servers, tr.s_link_servers);
+                ui.checkbox(&mut d.link_cloud, tr.s_link_cloud);
+                ui.checkbox(&mut d.link_video, tr.s_link_video);
+                field(ui, tr.s_extra_servers, Some(tr.s_extra_servers_help), |ui| {
+                    ui.add_enabled(
+                        d.link_servers,
+                        egui::TextEdit::singleline(&mut d.extra_servers).hint_text("my-server.xyz, other.net").desired_width(f32::INFINITY),
+                    );
+                });
+            });
+
             group(ui, tr.s_queue, |ui| {
                 ui.checkbox(&mut d.one_per_viewer, tr.s_one_per_viewer);
                 ui.checkbox(&mut d.ignore_duplicates, tr.s_duplicates);
@@ -580,7 +594,7 @@ impl App {
             ui.label(RichText::new(tr.a_title).family(theme::medium()).size(17.0).color(TEXT));
             ui.add_space(12.0);
             field(ui, tr.a_link, None, |ui| {
-                let r = ui.add(egui::TextEdit::singleline(&mut a.link).hint_text("https://osu.ppy.sh/scores/…").desired_width(f32::INFINITY));
+                let r = ui.add(egui::TextEdit::singleline(&mut a.link).hint_text("https://…").desired_width(f32::INFINITY));
                 if r.lost_focus() && ui.input(|i| i.key_pressed(egui::Key::Enter)) {
                     submit = true;
                 }
@@ -610,7 +624,7 @@ impl App {
             close = true;
         }
         if submit {
-            if find_links(&a.link).is_empty() {
+            if find_links(&a.link, &self.settings.link_rules()).is_empty() {
                 a.error = true;
             } else {
                 let user = if a.user.trim().is_empty() { "—".to_string() } else { a.user.trim().to_string() };
@@ -869,8 +883,12 @@ fn card(ui: &mut Ui, tr: &T, it: &Item) -> Option<Action> {
             ui.spacing_mut().item_spacing = Vec2::new(8.0, 6.0);
 
             ui.horizontal(|ui| {
-                let ic = if it.kind == LinkKind::Score { icon::TROPHY } else { icon::USER };
-                let kind = if it.kind == LinkKind::Score { tr.score } else { tr.profile };
+                let (ic, kind) = match it.kind {
+                    LinkKind::Score => (icon::TROPHY, tr.score),
+                    LinkKind::Profile => (icon::USER, tr.profile),
+                    LinkKind::Replay => (icon::REPLAY, tr.replay),
+                    LinkKind::Video => (icon::VIDEO, tr.video),
+                };
                 ui.label(RichText::new(ic).font(theme::icon_font(16.0)).color(fade(MUTED))).on_hover_text(kind);
                 ui.label(RichText::new(&it.user).family(theme::medium()).color(fade(TEXT)));
                 ui.with_layout(Layout::right_to_left(Align::Center), |ui| {
@@ -1004,9 +1022,9 @@ fn long_date(tr: &T, d: NaiveDate) -> String {
 }
 
 /// The message without the links, so cards don't repeat the URL.
-fn strip_links(text: &str) -> String {
+fn strip_links(text: &str, rules: &crate::parse::Rules) -> String {
     text.split_whitespace()
-        .filter(|w| !w.to_lowercase().contains("osu.ppy.sh/"))
+        .filter(|w| find_links(w, rules).is_empty())
         .collect::<Vec<_>>()
         .join(" ")
 }

@@ -6,6 +6,9 @@ use serde::{Deserialize, Serialize};
 pub enum LinkKind {
     Score,
     Profile,
+    /// A replay file or a cloud folder with one.
+    Replay,
+    Video,
 }
 
 /// Which of the three queues an item belongs to.

@@ -35,6 +35,8 @@ pub mod icon {
     pub const SETTINGS: &str = "\u{e158}";
     pub const TROPHY: &str = "\u{e377}";
     pub const USER: &str = "\u{e19f}";
+    pub const REPLAY: &str = "\u{e31b}";
+    pub const VIDEO: &str = "\u{e1a5}";
     pub const FOLDER: &str = "\u{e247}";
     pub const PLUS: &str = "\u{e141}";
     pub const UNDO: &str = "\u{e2a1}";

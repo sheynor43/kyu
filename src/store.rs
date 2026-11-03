@@ -26,6 +26,11 @@ pub struct Settings {
     pub da_token: String,
     pub dp_token: String,
     pub donation_min: f64,
+    pub link_servers: bool,
+    pub link_cloud: bool,
+    pub link_video: bool,
+    /// Extra private server domains, comma separated as typed in settings.
+    pub extra_servers: String,
     pub one_per_viewer: bool,
     pub ignore_duplicates: bool,
     pub day_start_hour: u32,
@@ -57,6 +62,10 @@ impl Default for Settings {
             da_token: String::new(),
             dp_token: String::new(),
             donation_min: 0.0,
+            link_servers: true,
+            link_cloud: true,
+            link_video: true,
+            extra_servers: String::new(),
             one_per_viewer: true,
             ignore_duplicates: true,
             day_start_hour: 6,
@@ -77,6 +86,15 @@ impl Settings {
             Queue::Paid => self.show_paid,
             Queue::Points => self.show_points,
             Queue::Free => self.show_free,
+        }
+    }
+
+    pub fn link_rules(&self) -> crate::parse::Rules {
+        crate::parse::Rules {
+            servers: self.link_servers,
+            cloud: self.link_cloud,
+            video: self.link_video,
+            extra_servers: crate::parse::parse_domains(&self.extra_servers),
         }
     }
 

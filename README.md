@@ -12,7 +12,10 @@ Kyu sits next to your stream and listens. When a viewer drops an osu! score or p
 ## What it does
 
 - **Three queues.** Donations (DonationAlerts, DonatePay and cheers with bits), channel points rewards, and plain chat. Each one can be hidden, so you can run a stream where only points requests are shown.
-- **Picks up links on its own.** `osu.ppy.sh/scores/…`, `osu.ppy.sh/users/…` and `osu.ppy.sh/u/…`, with or without `https://`.
+- **Picks up links on its own.** `osu.ppy.sh` scores and profiles, with or without `https://`. Also, each can be turned off in settings:
+  - private servers: Akatsuki, Gatari, Ripple, ppy.sb, EZPPFarm, Kawata, USSR, plus any domain you add;
+  - replays: MediaFire, Google Drive, Yandex Disk, Dropbox, MEGA, Discord files, catbox, gofile, and any direct `.osr` link;
+  - videos: YouTube, Streamable, Twitch clips, Medal.
 - **Keeps every day.** Each stream day is saved to its own file. A month later you can open any day and see who you watched and who you skipped.
 - **Nothing is deleted by default.** Turn on "Delete days older than" in settings if you want old days removed, 30 days by default.
 - **Day boundary you choose.** The day starts at 06:00 by default, so a stream that runs past midnight stays in one day.
@@ -28,8 +31,8 @@ Kyu sits next to your stream and listens. When a viewer drops an osu! score or p
 
 Grab the latest build from [Releases](https://github.com/sheynor43/kyu/releases/latest).
 
-- **Windows:** `Kyu-1.0.0-windows-x64.exe`, a single file, no installer.
-- **Linux:** `Kyu-1.0.0-x86_64.AppImage`, then `chmod +x Kyu-*.AppImage` and run it.
+- **Windows:** `Kyu-1.1.0-windows-x64.exe`, a single file, no installer.
+- **Linux:** `Kyu-1.1.0-x86_64.AppImage`, then `chmod +x Kyu-*.AppImage` and run it.
 
 Windows SmartScreen may warn about an unsigned app. Click "More info", then "Run anyway".
 
